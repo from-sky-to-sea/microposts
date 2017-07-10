@@ -13,12 +13,25 @@
           <p><%= micropost.content %></p>
         </div>
         <div>
+          
           <% if current_user == micropost.user %>
             <%= link_to "Delete", micropost, method: :delete, data: { confirm: "You sure?" }, class: 'btn btn-danger btn-xs' %>
           <% end %>
+            
+          <% if current_user.favorite?(micropost) %>
+            <%= form_for(current_user.favorites.find_by(favpost_id: micropost.id), html: { method: :delete }) do |f| %>
+              <%= hidden_field_tag :favpost_id, micropost.id %>
+              <%= f.submit 'お気に入り投稿', class: 'btn btn-success btn-xs' %>
+            <% end %>
+          <% else %>
+            <%= form_for(current_user.favorites.build) do |f| %>
+              <%= hidden_field_tag :favpost_id, micropost.id %>
+              <%= f.submit 'お気に入り投稿にする', class: 'btn btn-default btn-xs' %>
+            <% end %>
+          <% end %>
+          </div>
         </div>
-      </div>
-    </li>
-  <% end %>
+      </li>
+    <% end %>
   <%= paginate microposts %>
 </ul>

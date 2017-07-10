@@ -57,6 +57,12 @@ class User < ApplicationRecord
     self.favposts.include?( other_post )
   end
   
+  # ---- 課題対応
+  # 実行ユーザのお気に入り投稿を取得する
+  def favorite_microposts
+    Micropost.where(id: self.favpost_ids)
+  end
+  
 end
 
 

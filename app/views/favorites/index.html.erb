@@ -1,0 +1,46 @@
+<% if logged_in? %>
+  <div class="row">
+    <h2><%= @user.name %>のお気に入り投稿</h2>
+    <div class="col-xs-8">
+      <ul class="media-list">
+      <% @microposts.each do |micropost| %>
+      <% user = micropost.user %>
+      <li class="media">
+        <div class="media-left">
+          <img class="media-object img-rounded" src="<%= gravatar_url(user, options = { size: 50 }) %>" alt="">
+        </div>
+        <div class="media-body">
+          <div>
+            <%= link_to user.name, user_path(user) %> <span class="text-muted">posted at <%= micropost.created_at %></span>
+          </div>
+          <div>
+            <p><%= micropost.content %></p>
+          </div>
+          <div>
+            <% if current_user.favorite?(micropost) %>
+              <%= form_for(current_user.favorites.find_by(favpost_id: micropost.id), html: { method: :delete }) do |f| %>
+                <%= hidden_field_tag :favpost_id, micropost.id %>
+                <%= hidden_field_tag :from, 'favorites' %>
+                <%= f.submit 'お気に入り投稿', class: 'btn btn-success btn-xs' %>
+              <% end %>
+            <% else %>
+              <%= form_for(current_user.favorites.build) do |f| %>
+                <%= hidden_field_tag :favpost_id, micropost.id %>
+                <%= f.submit 'お気に入り投稿にする', class: 'btn btn-default btn-xs' %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </li>
+  <% end %>
+  <%= paginate @microposts %>
+</ul>
+    </div>
+  </div>
+  <duv class="row">
+    <hr>
+      <aside class="col-md-4"><p><%= link_to '投稿一覧へ戻る', root_path %></p>
+    </aside>
+  </div>
+<% else %>
+<% end %>

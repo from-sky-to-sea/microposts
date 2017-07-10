@@ -12,6 +12,11 @@
       <%= render 'microposts/microposts', microposts: @microposts %>
     </div>
   </div>
+  <duv class="row">
+    <hr>
+      <aside class="col-md-4"><p><%= link_to 'お気に入り投稿一覧を見る', favorites_path %></p>
+    </aside>
+  </div>
 <% else %>
   <div class="center jumbotron">
     <div class="text-center">
