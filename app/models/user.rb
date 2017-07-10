@@ -11,6 +11,14 @@ class User < ApplicationRecord
   has_many :reverses_of_relationship, class_name: 'Relationship', foreign_key: 'follow_id'
   has_many :followers, through: :reverses_of_relationship, source: :user
   
+  has_many :favorites
+  has_many :favposts, through: :favorites, source: :favpost
+  
+  # --- 課題対応
+  # あるポストのお気に入り登録数を知る場合は以下を追加する
+  #has_many :reverses_of_favorite, class_name: 'Favorite', foreign_key: 'favpost_id'
+  #has_many :favpostcounts, through: :reverses_of_favorite, source: :micropost
+  
   def follow(other_user)
     unless self == other_user
       self.relationships.find_or_create_by(follow_id: other_user.id)
@@ -28,6 +36,25 @@ class User < ApplicationRecord
   
   def feed_microposts
     Micropost.where(user_id: self.following_ids + [self.id])
+  end
+  
+  # --- 課題対応
+  
+  def add_to_favorite( liked_post )
+    # 現状、お気に入り登録する投稿は自分のものも出来る仕様。
+    #unless self == other_user
+      self.favorites.find_or_create_by(favpost_id: liked_post.id)
+    #end
+  end
+
+  def delete_from_favorite( unliked_post )
+    # 現状、お気に入り解除する投稿は自分のものも出来る仕様。
+    favorite = self.favorites.find_by(favpost_id: unliked_post.id)
+    favorite.destroy if favorite
+  end
+
+  def favorite?(other_post)
+    self.favposts.include?( other_post )
   end
   
 end
