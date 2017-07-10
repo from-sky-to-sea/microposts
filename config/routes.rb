@@ -6,8 +6,16 @@ Rails.application.routes.draw do
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
   
+  # user/1/followings. user/1/followers みたいになる
   get 'signup', to: 'users#new'
-  resources :users, only: [:index, :show, :new, :create]
+  resources :users, only: [:index, :show, :new, :create] do
+    member do
+      get :followings
+      get :followers
+    end
+  end
   
   resources :microposts, only: [:create, :destroy]
+  resources :relationships, only: [:create, :destroy]
+  
 end
