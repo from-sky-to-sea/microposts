@@ -10,6 +10,7 @@ class MicropostsController < ApplicationController
     else
       @microposts = current_user.feed_microposts.order('created_at DESC').page(params[:page])
       flash.now[:danger] = 'メッセージの登校に失敗しました。'
+      #redirect_to root_url
       render 'toppages/index'
     end
   end
@@ -20,11 +21,16 @@ class MicropostsController < ApplicationController
     # お気に入り投稿から削除
     
     current_user.delete_from_favorite(@micropost)
-    
     # その後、削除する
+    
     @micropost.destroy
     flash[:success] = 'メッセージを削除しました。'
-    redirect_back(fallback_location: root_path)
+    # 
+    if params[:controller] == 'microposts' && params[:action] == 'destroy'
+      redirect_to root_url
+    else
+      redirect_back(fallback_location: root_path)
+    end
   end
   
   private
